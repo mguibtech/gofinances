@@ -13,7 +13,7 @@ export const Header = styled.View`
     align-items: center;
 
     background-color: ${({theme}) => theme.colors.primary};
-    height: ${RFValue(100)}px;
+    height: ${RFValue(113)}px;
 `;
 
 export const Title = styled.Text`

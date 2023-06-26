@@ -62,8 +62,8 @@ export default function App() {
       onLayout={onLayoutRootView}>
       <ThemeProvider theme={theme}>
         {/* <Dashboard /> */}
-        {/* <Register/> */}
-        <CategorySelect/>
+        <Register/>
+        {/* <CategorySelect/> */}
       </ThemeProvider>
     </View>
 
