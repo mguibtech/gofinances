@@ -15,6 +15,7 @@ import {
 import { Dashboard } from './src/screens/Dashboard';
 import theme from './src/global/styles/theme';
 import { Register } from './src/screens/Register';
+import { CategorySelect } from './src/Components/CategorySelect';
 
 export default function App() {
 
@@ -61,7 +62,8 @@ export default function App() {
       onLayout={onLayoutRootView}>
       <ThemeProvider theme={theme}>
         {/* <Dashboard /> */}
-        <Register/>
+        {/* <Register/> */}
+        <CategorySelect/>
       </ThemeProvider>
     </View>
 
