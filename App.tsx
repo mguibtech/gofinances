@@ -14,6 +14,7 @@ import {
 
 import { Dashboard } from './src/screens/Dashboard';
 import theme from './src/global/styles/theme';
+import { Register } from './src/screens/Register';
 
 export default function App() {
 
@@ -59,7 +60,8 @@ export default function App() {
       }}
       onLayout={onLayoutRootView}>
       <ThemeProvider theme={theme}>
-        <Dashboard />
+        {/* <Dashboard /> */}
+        <Register/>
       </ThemeProvider>
     </View>
 
