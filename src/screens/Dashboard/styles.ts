@@ -5,6 +5,7 @@ import { getStatusBarHeight } from 'react-native-iphone-x-helper'
 import { getBottomSpace } from 'react-native-iphone-x-helper'
 import { DataListProps } from '.'
 import { FlatList, FlatListProps  } from 'react-native'
+import { RectButton } from 'react-native-gesture-handler';
 
 export const Container = styled.View`
     flex: 1;
@@ -59,6 +60,8 @@ export const UserName = styled.Text`
     font-size: ${RFValue(16)}px;
     font-family: ${({ theme }) => theme.fonts.bold};
 `;
+
+export const LogountButton = styled.TouchableOpacity``;
 
 export const Icon = styled(Feather)`
     font-size: ${RFValue(24)}px;
