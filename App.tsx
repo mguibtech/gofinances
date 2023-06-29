@@ -14,6 +14,10 @@ import {
 
 import { Dashboard } from './src/screens/Dashboard';
 import theme from './src/global/styles/theme';
+import { Register } from './src/screens/Register';
+import { CategorySelect } from './src/Components/CategorySelect';
+import { NavigationContainer } from '@react-navigation/native'
+import { AppRoutes } from './src/routes/app.routes';
 
 export default function App() {
 
@@ -59,7 +63,9 @@ export default function App() {
       }}
       onLayout={onLayoutRootView}>
       <ThemeProvider theme={theme}>
-        <Dashboard />
+        <NavigationContainer>
+          <AppRoutes/>
+        </NavigationContainer>
       </ThemeProvider>
     </View>
 
