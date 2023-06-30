@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { 
-    Modal, 
+import React, { useState, useEffect } from "react";
+import {
+    Modal,
     TouchableWithoutFeedback,
     Keyboard,
     Alert
@@ -15,6 +15,9 @@ import { TransactionTypeButton } from "../../Components/Form/TransactionTypeButt
 import { CategorySelectButton } from "../../Components/Form/CategorySelectButton";
 import { InputForm } from "../../Components/Form/InputForm";
 import { CategorySelect } from "../../Components/CategorySelect";
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+import { useNavigation } from '@react-navigation/native'
 
 import {
     Container,
@@ -24,12 +27,17 @@ import {
     Fields,
     TransactionsTypes
 } from "./styles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+type NavigationProps = {
+    navigate: (screen: string) => void;
+}
 
 
 interface FormData {
     name: string;
     amount: number;
-  }
+}
 
 const schema = Yup.object().shape({
     name: Yup.string().required('Nome é obrigatório!'),
@@ -38,7 +46,7 @@ const schema = Yup.object().shape({
         .typeError('Informe um valor numérico')
         .positive('O valor não pode ser negativo')
         .required('O valor é obrigatório!')
-    
+
 }).required()
 
 export function Register() {
@@ -48,18 +56,22 @@ export function Register() {
         name: 'Categoria',
     })
 
+    const navigation = useNavigation<NavigationProps>()
+
     const [transactionType, setTransactionType] = useState('');
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+    const dataKey = '@gofinance:transactions';
 
     const {
         control,
         handleSubmit,
-        formState: {errors}
+        reset,
+        formState: { errors }
     } = useForm({
         resolver: yupResolver<any>(schema)
     })
 
-    function handleTransactionsTypeSelect(type: 'up' | 'down') {
+    function handleTransactionsTypeSelect(type: 'positive' | 'negative') {
         setTransactionType(type);
     }
 
@@ -71,22 +83,61 @@ export function Register() {
         setCategoryModalOpen(true);
     }
 
-    function handleRegister(form: FormData) {
-        if(!transactionType) return Alert.alert('Selecione o tipo da tranação!')
+    async function handleRegister(form: FormData) {
+        if (!transactionType) return Alert.alert('Selecione o tipo da tranação!')
 
-        if(category.key === 'category'){
+        if (category.key === 'category') {
             return Alert.alert('Selecione a categoria!')
         }
 
-        const data = {
+        const newTransaction = {
+            id: String(uuidv4()),
             name: form.name,
             amount: form.amount,
-            transactionType,
-            category: category.key
+            type: transactionType,
+            category: category.key,
+            date: new Date()
         }
 
-        console.log(data)
+        try {
+            const data = await AsyncStorage.getItem(dataKey);
+            const currentData = data ? JSON.parse(data) : [];
+
+            const dataFomated = [
+                newTransaction,
+                ...currentData,
+            ]
+
+            await AsyncStorage.setItem(dataKey, JSON.stringify(dataFomated));
+
+            reset();
+            setTransactionType('')
+            setCategory({
+                key: 'category',
+                name: 'Categoria',
+            })
+            navigation.navigate('Listagem')
+
+        } catch (error) {
+            console.log(error)
+            Alert.alert('Não foi possível salvar atividade.')
+        }
     }
+
+    // useEffect(() => {
+    //     async function loadData() {
+    //         const data = await AsyncStorage.getItem(dataKey)
+    //         console.log(JSON.parse(data!))
+    //     }
+
+    //     loadData();
+
+    //     // async function removeAll() {
+    //     //     await AsyncStorage.removeItem(dataKey);
+    //     // }
+
+    //     // removeAll()
+    // }, [])
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -116,14 +167,14 @@ export function Register() {
                             <TransactionTypeButton
                                 title="Income"
                                 type="up"
-                                onPress={() => handleTransactionsTypeSelect('up')}
-                                isActive={transactionType === 'up'}
+                                onPress={() => handleTransactionsTypeSelect('positive')}
+                                isActive={transactionType === 'positive'}
                             />
                             <TransactionTypeButton
                                 title="Outcome"
                                 type="down"
-                                onPress={() => handleTransactionsTypeSelect('down')}
-                                isActive={transactionType === 'down'}
+                                onPress={() => handleTransactionsTypeSelect('negative')}
+                                isActive={transactionType === 'negative'}
                             />
                         </TransactionsTypes>
 
